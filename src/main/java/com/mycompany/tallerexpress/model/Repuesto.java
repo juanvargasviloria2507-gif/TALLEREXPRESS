@@ -1,31 +1,43 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package com.mycompany.tallerexpress.model;
 
+import java.sql.Date;
+import java.sql.Timestamp;
+
 public class Repuesto {
+
     private Integer id;
     private String codigoReferencia;
     private String nombre;
+    private String categoria;
     private String presentacion;
     private String proveedor;
     private int stockTotal;
     private int stockDisponible;
     private double precioUnitario;
+    private String estado;
+    private Date fechaRegistro;
+    private Timestamp createdAt;
 
     public Repuesto() {
     }
 
-    public Repuesto(Integer id, String codigoReferencia, String nombre, String presentacion, String proveedor, int stockTotal, int stockDisponible, double precioUnitario) {
+    public Repuesto(Integer id, String codigoReferencia, String nombre,
+            String categoria, String presentacion, String proveedor,
+            int stockTotal, int stockDisponible, double precioUnitario,
+            String estado, Date fechaRegistro, Timestamp createdAt) {
+
         this.id = id;
         this.codigoReferencia = codigoReferencia;
         this.nombre = nombre;
+        this.categoria = categoria;
         this.presentacion = presentacion;
         this.proveedor = proveedor;
         this.stockTotal = stockTotal;
         this.stockDisponible = stockDisponible;
         this.precioUnitario = precioUnitario;
+        this.estado = estado;
+        this.fechaRegistro = fechaRegistro;
+        this.createdAt = createdAt;
     }
 
     public Integer getId() {
@@ -50,6 +62,14 @@ public class Repuesto {
 
     public void setNombre(String nombre) {
         this.nombre = nombre;
+    }
+
+    public String getCategoria() {
+        return categoria;
+    }
+
+    public void setCategoria(String categoria) {
+        this.categoria = categoria;
     }
 
     public String getPresentacion() {
@@ -90,5 +110,29 @@ public class Repuesto {
 
     public void setPrecioUnitario(double precioUnitario) {
         this.precioUnitario = precioUnitario;
+    }
+
+    public String getEstado() {
+        return estado;
+    }
+
+    public void setEstado(String estado) {
+        this.estado = estado;
+    }
+
+    public Date getFechaRegistro() {
+        return fechaRegistro;
+    }
+
+    public void setFechaRegistro(Date fechaRegistro) {
+        this.fechaRegistro = fechaRegistro;
+    }
+
+    public Timestamp getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(Timestamp createdAt) {
+        this.createdAt = createdAt;
     }
 }

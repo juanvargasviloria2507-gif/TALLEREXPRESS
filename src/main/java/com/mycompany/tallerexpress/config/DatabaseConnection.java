@@ -14,7 +14,7 @@ public class DatabaseConnection {
 
     private static final String URL = "jdbc:postgresql://localhost:5432/TallerExpress";
     private static final String USER = "postgres";
-    private static final String PASSWORD = "Qwe.123*";
+    private static final String PASSWORD = "Juan2004";
     
     private DatabaseConnection(){}
     
@@ -22,3 +22,4 @@ public class DatabaseConnection {
         return DriverManager.getConnection(URL, USER, PASSWORD);
     }
 }
+

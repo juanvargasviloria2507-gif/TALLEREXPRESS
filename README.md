@@ -1,6 +1,6 @@
 # TallerExpress
 
-Sistema de gestión para un taller automotriz desarrollado en Java con Swing y PostgreSQL. Permite administrar clientes, vehículos, repuestos, usuarios y órdenes de servicio desde una interfaz gráfica basada en `JOptionPane`.
+Aplicación de escritorio para la gestión de un taller automotriz, desarrollada con Java 17, Swing (`JOptionPane`) y PostgreSQL. Permite administrar clientes, vehículos, repuestos, usuarios y órdenes de servicio.
 
 ## Datos del Coder
 
@@ -22,13 +22,16 @@ Entre sus funciones principales se encuentran:
 - Control de acceso para usuarios con rol administrador.
 - Persistencia de datos en PostgreSQL.
 
-La aplicación utiliza una arquitectura simple por capas:
+La aplicación utiliza una arquitectura por capas:
 
-- `controller`: controla la lógica de interfaz y flujo de acciones.
-- `service`: implementa la lógica de negocio.
-- `dao`: accede a la base de datos.
-- `model`: define las entidades del sistema.
-- `config`: almacena la configuración de conexión.
+- `presentation`: muestra los menús y diálogos de Swing.
+- `controller`: agrupa las operaciones de cada módulo.
+- `service`: contiene la lógica de negocio.
+- `dao`: define el acceso a datos y sus implementaciones.
+- `model`: representa las entidades del sistema.
+- `config`: contiene la conexión a PostgreSQL.
+- `exception`: define excepciones de negocio y persistencia.
+- `util`: incluye utilidades para registro y formato de tablas.
 
 ## Requisitos previos
 
@@ -41,12 +44,14 @@ Antes de ejecutar el proyecto, asegúrate de tener instalado lo siguiente:
 
 ## Base de datos
 
-El proyecto usa PostgreSQL con la siguiente configuración por defecto en `DatabaseConnection.java`:
+El proyecto usa PostgreSQL. La configuración actual está definida directamente en `DatabaseConnection.java`:
 
 - URL: `jdbc:postgresql://localhost:5432/TallerExpress`
 - Usuario: `postgres`
-- Contraseña: `Qwe.123*`
+- Contraseña: valor definido en la constante `PASSWORD`
 
+> La contraseña está hardcodeada actualmente. Para otro entorno, cambia `URL`, `USER` y `PASSWORD` antes de ejecutar la aplicación. No reutilices credenciales reales en el repositorio.
+>
 > Es importante que la base de datos `TallerExpress` exista antes de ejecutar la aplicación.
 
 ## Configuración y ejecución
@@ -100,9 +105,9 @@ El script crea un usuario administrador con estas credenciales:
 - Usuario: `admin`
 - Contraseña: `admin123`
 
-## Capturas de pantalla de JOptionPane
+## Uso de la aplicación
 
-La interfaz principal del sistema se desarrolla mediante cuadros de diálogo de Swing (`JOptionPane`). Algunos ejemplos de pantallas esperadas son:
+La interfaz se desarrolla mediante cuadros de diálogo de Swing (`JOptionPane`). Desde el menú principal se puede acceder a:
 
 - Login de usuario
 - Menú principal del taller
@@ -111,6 +116,14 @@ La interfaz principal del sistema se desarrolla mediante cuadros de diálogo de 
 - Registro de órdenes de servicio
 - Mensajes de confirmación y error
 
+El acceso a `Gestión de Usuarios` está restringido al rol `ADMIN`. Los roles disponibles en la base de datos son `ADMIN` y `RECEPCIONISTA`.
+
+## Pruebas
+
+Actualmente no hay clases de prueba en `src/test/java`. La comprobación disponible es compilar el proyecto con:
+
+```bash
+mvn clean package
 ```
 
 ## Árbol de archivos
@@ -131,7 +144,8 @@ TallerExpress/
 │                       │   ├── ClienteController.java
 │                       │   ├── OrdenesServicioController.java
 │                       │   ├── RepuestoController.java
-│                       │   └── UsuariosController.java
+│                       │   ├── UsuariosController.java
+│                       │   └── VehiculosController.java
 │                       ├── dao/
 │                       │   ├── ClienteDao.java
 │                       │   ├── OrdenesServicioDao.java
@@ -153,6 +167,12 @@ TallerExpress/
 │                       │   ├── Repuesto.java
 │                       │   ├── Usuarios.java
 │                       │   └── Vehiculos.java
+│                       ├── presentation/
+│                       │   ├── ClientePresentation.java
+│                       │   ├── OrdenesServicioPresentation.java
+│                       │   ├── RepuestoPresentation.java
+│                       │   ├── UsuariosPresentation.java
+│                       │   └── VehiculosPresentation.java
 │                       ├── service/
 │                       │   ├── ClienteService.java
 │                       │   ├── OrdenesServicioService.java
@@ -172,7 +192,7 @@ TallerExpress/
 ├── nb-configuration.xml
 ├── pom.xml
 ├── README.md
-└── target/
+└── target/                  # Generado por Maven; no es código fuente
 ```
 
 ## Notas finales

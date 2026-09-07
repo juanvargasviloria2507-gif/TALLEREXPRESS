@@ -10,9 +10,7 @@ import com.mycompany.tallerexpress.exception.BusinessException;
 import com.mycompany.tallerexpress.model.Cliente;
 import com.mycompany.tallerexpress.service.ClienteService;
 
-import java.sql.Timestamp;
 import java.util.List;
-import java.util.Optional;
 
 public class ClienteServiceImpl implements ClienteService {
 
@@ -20,18 +18,34 @@ public class ClienteServiceImpl implements ClienteService {
 
     @Override
     public Cliente create(Cliente cliente) throws Exception {
-        if (cliente.getDocumento() == null || cliente.getDocumento().isBlank()) {
-            throw new BusinessException("El documento es obligatorio.");
-        }
-        if (cliente.getNombre() == null || cliente.getNombre().isBlank()) {
-            throw new BusinessException("El nombre es obligatorio.");
+
+        if (cliente == null) {
+            throw new BusinessException("El cliente es obligatorio.");
         }
 
-        if (cliente.getIsActivo() == null) {
-            cliente.setIsActivo(true);
+        if (cliente.getTipoIdentificacion() == null
+                || cliente.getTipoIdentificacion().isBlank()) {
+            throw new BusinessException("El tipo de identificación es obligatorio.");
         }
-        if (cliente.getCreatedAt() == null) {
-            cliente.setCreatedAt(new Timestamp(System.currentTimeMillis()));
+
+        if (cliente.getNumeroIdentificacion() == null
+                || cliente.getNumeroIdentificacion().isBlank()) {
+            throw new BusinessException("El número de identificación es obligatorio.");
+        }
+
+        if (cliente.getNombreCompleto() == null
+                || cliente.getNombreCompleto().isBlank()) {
+            throw new BusinessException("El nombre completo es obligatorio.");
+        }
+
+        if (cliente.getEstado() == null || cliente.getEstado().isBlank()) {
+            cliente.setEstado("ACTIVO");
+        }
+
+        if (cliente.getFechaRegistro() == null) {
+            cliente.setFechaRegistro(
+                    new java.sql.Date(System.currentTimeMillis())
+            );
         }
 
         return clienteDao.create(cliente);
@@ -43,12 +57,51 @@ public class ClienteServiceImpl implements ClienteService {
     }
 
     @Override
-    public Optional<Cliente> buscarPorDocumento(String documento) throws Exception {
-        if (documento == null || documento.isBlank()) {
-            throw new BusinessException("El documento de búsqueda no puede estar vacío.");
+    public Cliente findById(Integer id) throws Exception {
+
+        if (id == null || id <= 0) {
+            throw new BusinessException("El ID del cliente no es válido.");
         }
-        return clienteDao.findAll().stream()
-                .filter(c -> documento.equalsIgnoreCase(c.getDocumento()))
-                .findFirst();
+
+        return clienteDao.findById(id);
+    }
+
+    @Override
+    public void update(Cliente cliente) throws Exception {
+
+        if (cliente == null) {
+            throw new BusinessException("El cliente es obligatorio.");
+        }
+
+        if (cliente.getId() == null || cliente.getId() <= 0) {
+            throw new BusinessException("El ID del cliente no es válido.");
+        }
+
+        if (cliente.getTipoIdentificacion() == null
+                || cliente.getTipoIdentificacion().isBlank()) {
+            throw new BusinessException("El tipo de identificación es obligatorio.");
+        }
+
+        if (cliente.getNumeroIdentificacion() == null
+                || cliente.getNumeroIdentificacion().isBlank()) {
+            throw new BusinessException("El número de identificación es obligatorio.");
+        }
+
+        if (cliente.getNombreCompleto() == null
+                || cliente.getNombreCompleto().isBlank()) {
+            throw new BusinessException("El nombre completo es obligatorio.");
+        }
+
+        clienteDao.update(cliente);
+    }
+
+    @Override
+    public void delete(Integer id) throws Exception {
+
+        if (id == null || id <= 0) {
+            throw new BusinessException("El ID del cliente no es válido.");
+        }
+
+        clienteDao.delete(id);
     }
 }

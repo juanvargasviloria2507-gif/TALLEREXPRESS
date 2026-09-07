@@ -8,8 +8,8 @@ package com.mycompany.tallerexpress.exception;
  *
  * @author Coder
  */
-
 public class PersistenceException extends Exception {
+
     public PersistenceException(String message) {
         super(message);
     }

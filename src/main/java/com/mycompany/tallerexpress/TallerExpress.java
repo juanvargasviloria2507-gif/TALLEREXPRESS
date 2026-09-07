@@ -1,35 +1,50 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- */
-
 package com.mycompany.tallerexpress;
 
-import com.mycompany.tallerexpress.controller.ClienteController;
-import com.mycompany.tallerexpress.controller.OrdenesServicioController;
-import com.mycompany.tallerexpress.controller.RepuestoController;
-import com.mycompany.tallerexpress.controller.UsuariosController;
+import com.mycompany.tallerexpress.presentation.ClientePresentation;
+import com.mycompany.tallerexpress.presentation.OrdenesServicioPresentation;
+import com.mycompany.tallerexpress.presentation.RepuestoPresentation;
+import com.mycompany.tallerexpress.presentation.UsuariosPresentation;
+import com.mycompany.tallerexpress.presentation.VehiculosPresentation;
 import com.mycompany.tallerexpress.model.Usuarios;
 
 import javax.swing.JOptionPane;
 
 public class TallerExpress {
 
-    private static final UsuariosController usuariosController = new UsuariosController();
-    private static final ClienteController clienteController = new ClienteController();
-    private static final RepuestoController repuestoController = new RepuestoController();
-    private static final OrdenesServicioController ordenesController = new OrdenesServicioController();
+    private static final ClientePresentation clientePresentation =
+            new ClientePresentation();
+
+    private static final VehiculosPresentation vehiculosPresentation =
+            new VehiculosPresentation();
+
+    private static final RepuestoPresentation repuestoPresentation =
+            new RepuestoPresentation();
+
+    private static final OrdenesServicioPresentation ordenesPresentation =
+            new OrdenesServicioPresentation();
+
+    private static final UsuariosPresentation usuariosPresentation =
+            new UsuariosPresentation();
 
     private static Usuarios usuarioAutenticado = null;
 
     public static void main(String[] args) {
+
         boolean salir = false;
 
         while (!salir) {
+
             if (usuarioAutenticado == null) {
-                String[] opcionesAuth = {"Iniciar Sesión", "Salir"};
+
+                String[] opcionesAuth = {
+                    "Iniciar Sesión",
+                    "Salir"
+                };
+
                 int seleccion = JOptionPane.showOptionDialog(
                         null,
-                        "¡Bienvenido a TallerExpress!\nPor favor, inicie sesión para continuar.",
+                        "¡Bienvenido a TallerExpress!\n"
+                        + "Por favor, inicie sesión para continuar.",
                         "Autenticación - TallerExpress",
                         JOptionPane.DEFAULT_OPTION,
                         JOptionPane.INFORMATION_MESSAGE,
@@ -39,69 +54,138 @@ public class TallerExpress {
                 );
 
                 if (seleccion == 0) {
-                    usuarioAutenticado = usuariosController.login();
+
+                    try {
+                        usuarioAutenticado =
+                                usuariosPresentation.iniciarSesion();
+
+                        JOptionPane.showMessageDialog(
+                                null,
+                                "Inicio de sesión exitoso.",
+                                "Bienvenido",
+                                JOptionPane.INFORMATION_MESSAGE
+                        );
+
+                    } catch (Exception e) {
+
+                        JOptionPane.showMessageDialog(
+                                null,
+                                e.getMessage(),
+                                "Error de autenticación",
+                                JOptionPane.ERROR_MESSAGE
+                        );
+                    }
+
                 } else {
+
                     salir = true;
                 }
+
             } else {
+
                 mostrarMenuPrincipal();
             }
         }
 
-        JOptionPane.showMessageDialog(null, "¡Gracias por usar TallerExpress!", "Cierre de Sistema", JOptionPane.INFORMATION_MESSAGE);
+        JOptionPane.showMessageDialog(
+                null,
+                "¡Gracias por usar TallerExpress!",
+                "Cierre de Sistema",
+                JOptionPane.INFORMATION_MESSAGE
+        );
     }
 
     private static void mostrarMenuPrincipal() {
-        String rol = usuarioAutenticado.getRole().toUpperCase();
-        
-        // Menú adaptado a los 4 controladores (Clientes incluye Vehículos)
-        String[] options = {
+
+        String rol = usuarioAutenticado
+                .getRole()
+                .toUpperCase();
+
+        String[] opciones = {
+            "Gestión de Clientes",
+            "Gestión de Vehículos",
             "Gestión de Repuestos",
-            "Gestión de Clientes y Vehículos",
             "Órdenes de Servicio",
             "Gestión de Usuarios",
             "Cerrar Sesión",
             "Salir"
         };
 
-        int choice = JOptionPane.showOptionDialog(
+        int seleccion = JOptionPane.showOptionDialog(
                 null,
-                "=== TALLEREXPRESS ===\nUsuario: " + usuarioAutenticado.getUsername() + " | Rol: [" + rol + "]\nSeleccione una opción:",
+                "=== TALLEREXPRESS ===\n"
+                + "Usuario: " + usuarioAutenticado.getUsername()
+                + " | Rol: [" + rol + "]\n\n"
+                + "Seleccione una opción:",
                 "Menú Principal",
                 JOptionPane.DEFAULT_OPTION,
                 JOptionPane.PLAIN_MESSAGE,
                 null,
-                options,
-                options[0]
+                opciones,
+                opciones[0]
         );
 
-        if (choice == -1) {
+        if (seleccion == -1) {
             cerrarSesion();
             return;
         }
 
         try {
-            switch (choice) {
-                case 0 -> repuestoController.menuRepuestos();
-                case 1 -> clienteController.iniciar();
-                case 2 -> ordenesController.menuOrdenes();
-                case 3 -> {
+
+            switch (seleccion) {
+
+                case 0 -> clientePresentation.menu();
+
+                case 1 -> vehiculosPresentation.menu();
+
+                case 2 -> repuestoPresentation.menu();
+
+                case 3 -> ordenesPresentation.menu();
+
+                case 4 -> {
+
                     if ("ADMIN".equalsIgnoreCase(rol)) {
-                        usuariosController.iniciar();
+
+                        usuariosPresentation.menu();
+
                     } else {
-                        JOptionPane.showMessageDialog(null, "Acceso denegado. Se requieren permisos de ADMINISTRADOR.", "Permisos Insuficientes", JOptionPane.WARNING_MESSAGE);
+
+                        JOptionPane.showMessageDialog(
+                                null,
+                                "Acceso denegado. "
+                                + "Se requieren permisos de ADMINISTRADOR.",
+                                "Permisos Insuficientes",
+                                JOptionPane.WARNING_MESSAGE
+                        );
                     }
                 }
-                case 4 -> cerrarSesion();
-                case 5 -> System.exit(0);
+
+                case 5 -> cerrarSesion();
+
+                case 6 -> System.exit(0);
             }
+
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(null, "Ocurrió un error inesperado: " + e.getMessage(), "Error del Sistema", JOptionPane.ERROR_MESSAGE);
+
+            JOptionPane.showMessageDialog(
+                    null,
+                    "Ocurrió un error inesperado: "
+                    + e.getMessage(),
+                    "Error del Sistema",
+                    JOptionPane.ERROR_MESSAGE
+            );
         }
     }
 
     private static void cerrarSesion() {
+
         usuarioAutenticado = null;
-        JOptionPane.showMessageDialog(null, "Sesión cerrada correctamente.", "Cierre de Sesión", JOptionPane.INFORMATION_MESSAGE);
+
+        JOptionPane.showMessageDialog(
+                null,
+                "Sesión cerrada correctamente.",
+                "Cierre de Sesión",
+                JOptionPane.INFORMATION_MESSAGE
+        );
     }
 }

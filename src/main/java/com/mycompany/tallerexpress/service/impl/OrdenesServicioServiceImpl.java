@@ -11,6 +11,7 @@ import com.mycompany.tallerexpress.model.OrdenesServicio;
 import com.mycompany.tallerexpress.service.OrdenesServicioService;
 import com.mycompany.tallerexpress.util.HttpLogger;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 public class OrdenesServicioServiceImpl implements OrdenesServicioService {
@@ -18,42 +19,93 @@ public class OrdenesServicioServiceImpl implements OrdenesServicioService {
     private final OrdenesServicioDao ordenesDao = new OrdenesServicioImpl();
 
     @Override
-    public OrdenesServicio registrarOrden(OrdenesServicio orden, Integer repuestoId, Integer cantidad) throws Exception {
-        HttpLogger.log("POST", "/api/ordenes", 201, "Registrando orden de servicio");
+    public OrdenesServicio registrarOrdenTransaccional(
+            OrdenesServicio orden,
+            Integer repuestoId,
+            Integer cantidad
+    ) throws Exception {
+
+        HttpLogger.log(
+                "POST",
+                "/api/ordenes",
+                201,
+                "Registrando orden de servicio"
+        );
+
+        if (orden == null) {
+            throw new BusinessException("La orden de servicio es obligatoria.");
+        }
 
         if (orden.getClienteId() == null || orden.getClienteId() <= 0) {
             throw new BusinessException("El ID del cliente es obligatorio.");
         }
+
         if (orden.getVehiculoId() == null || orden.getVehiculoId() <= 0) {
             throw new BusinessException("El ID del vehículo es obligatorio.");
         }
-        if (orden.getMecanico() == null || orden.getMecanico().isBlank()) {
+
+        if (repuestoId != null && repuestoId <= 0) {
+            throw new BusinessException("El ID del repuesto no es válido.");
+        }        
+        
+        if (orden.getMecanicoResponsable() == null
+                || orden.getMecanicoResponsable().isBlank()) {
             throw new BusinessException("Debe asignar un mecánico responsable.");
         }
 
-        return ordenesDao.registrarOrdenTransaccional(orden, repuestoId, cantidad);
+        if (repuestoId != null && (cantidad == null || cantidad <= 0)) {
+            throw new BusinessException("La cantidad del repuesto debe ser mayor a cero.");
+        }
+
+        return ordenesDao.registrarOrdenTransaccional(
+                orden,
+                repuestoId,
+                cantidad
+        );
     }
 
     @Override
-    public void actualizarEstadoYCosto(Integer ordenId, String nuevoEstado, Double costoTotal) throws Exception {
-        HttpLogger.log("PATCH", "/api/ordenes/" + ordenId, 200, "Actualizando estado y costo");
+    public void actualizarEstadoYCostoTransaccional(
+            Integer ordenId,
+            String nuevoEstado,
+            BigDecimal costoTotal
+    ) throws Exception {
+
+        HttpLogger.log(
+                "PATCH",
+                "/api/ordenes/" + ordenId,
+                200,
+                "Actualizando estado y costo"
+        );
 
         if (ordenId == null || ordenId <= 0) {
             throw new BusinessException("ID de orden inválido.");
         }
+
         if (nuevoEstado == null || nuevoEstado.isBlank()) {
             throw new BusinessException("El nuevo estado es obligatorio.");
         }
-        if (costoTotal == null || costoTotal < 0) {
+
+        if (costoTotal == null || costoTotal.compareTo(BigDecimal.ZERO) < 0) {
             throw new BusinessException("El costo total no puede ser negativo.");
         }
 
-        ordenesDao.actualizarEstadoYCostoTransaccional(ordenId, nuevoEstado, costoTotal);
+        ordenesDao.actualizarEstadoYCostoTransaccional(
+                ordenId,
+                nuevoEstado,
+                costoTotal
+        );
     }
 
     @Override
-    public List<OrdenesServicio> listarPorVehiculo(Integer vehiculoId) throws Exception {
-        HttpLogger.log("GET", "/api/ordenes/vehiculo/" + vehiculoId, 200, "Consultando historial");
+    public List<OrdenesServicio> findByVehiculo(Integer vehiculoId) throws Exception {
+
+        HttpLogger.log(
+                "GET",
+                "/api/ordenes/vehiculo/" + vehiculoId,
+                200,
+                "Consultando historial"
+        );
 
         if (vehiculoId == null || vehiculoId <= 0) {
             throw new BusinessException("ID de vehículo inválido.");

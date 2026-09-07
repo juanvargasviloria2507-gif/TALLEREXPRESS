@@ -5,11 +5,18 @@
 package com.mycompany.tallerexpress.service;
 
 import com.mycompany.tallerexpress.model.Cliente;
+
 import java.util.List;
-import java.util.Optional;
 
 public interface ClienteService {
+
     Cliente create(Cliente cliente) throws Exception;
+
     List<Cliente> findAll() throws Exception;
-    Optional<Cliente> buscarPorDocumento(String documento) throws Exception;
+
+    Cliente findById(Integer id) throws Exception;
+
+    void update(Cliente cliente) throws Exception;
+
+    void delete(Integer id) throws Exception;
 }
